@@ -33,6 +33,7 @@
     var y = d3.scale.ordinal()
             .domain(data)
             .rangeBands([0, 120]);
+
     chart.selectAll("rect")
             .data(data)
             .enter().append("rect")

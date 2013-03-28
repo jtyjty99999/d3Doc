@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<style type="text/css">
+    body{
+        height: 100%;
+
+    }
+    .chart rect {
+        fill: steelblue;
+        stroke: white;
+    }
+
+</style>
+<script src="./js/d3.v3.min.js"></script>
+<body>
+
+
+</body>
+<script type="text/javascript">
+    var data = [], count = 0;
+    var timer = setInterval(function () {
+        if (count == 20) {
+            clearInterval(timer)
+            chartInit()
+        }
+        data.push({
+            'value' : parseInt(100 * Math.random()),
+            'time' : +new Date()
+        })
+        count += 1
+    }, 10)
+    function chartInit() {
+
+        var w = 20,
+                h = 80;
+
+        var x = d3.scale.linear()
+                .domain([0, 1])
+                .range([0, w]);
+
+        var y = d3.scale.linear()
+                .domain([0, 100])
+                .rangeRound([0, h]);
+
+        var chart = d3.select("body").append("svg")
+                .attr("class", "chart")
+                .attr("width", w * data.length - 1)
+                .attr("height", h);
+
+        function redraw() {
+
+            var rect = chart.selectAll("rect")
+                    .data(data, function (d) {
+                        return d.time;
+                    });
+
+            // Enter…
+            rect.enter().insert("rect", "line")
+                    .attr("x", function (d, i) {
+                        return x(i) - .5;
+                    })
+                    .attr("y", function (d) {
+                        return h - y(d.value) - .5;
+                    })
+                    .attr("width", w)
+                    .attr("height", function (d) {
+                        return y(d.value);
+                    });
+
+            // Update…
+            rect.transition()
+                    .duration(1000)
+                    .attr("x", function (d, i) {
+                        return x(i) - .5;
+                    });
+
+            // Exit…
+            rect.exit()
+                    .remove();
+        }
+
+        setInterval(function () {
+            data.shift()
+            data.push({
+                'value' : parseInt(100 * Math.random()),
+                'time' : +new Date()
+            })
+            redraw()
+        }, 1000)
+    }
+
+
+</script>
+</html>
